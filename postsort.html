@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html manifest="postsort.appcache">
+<head>
+	<meta charset="utf-8">
+
+<!-- apple viewport standalone -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+<!-- load iscroll5 -->
+	<script type="text/javascript" src="iscroll-lite.js"></script>
+	<script type="text/javascript" src="jquery-1.10.2.min.js"></script>
+
+
+<!-- initialize iscroll5 -->
+	<script type="text/javascript">
+		var myScroll;
+		function loaded () {
+		myScroll = new IScroll('#wrapper');
+		}
+		document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+	</script>
+
+<title>Post Sort Comments</title>
+
+<style>
+
+/*  *************** page specific styles*/
+	.button {
+	text-align: center;
+	padding-top: 5px;
+ }
+ .greenReportCard {
+	background-color: #99cc99;
+	height: 170px;
+	width: 170px;
+	display: table;
+	float: left;
+	cursor: text;
+	margin: 10px;
+	padding: 0px;
+	-webkit-border-radius:5px;
+ }
+
+.pinkReportCard {
+	background-color: #ff9999;
+	height: 170px;
+	width: 170px;
+	display: table;
+	float: left;
+	cursor: text;
+	margin: 10px;
+	margin-top: 0px;
+	padding: 0px;
+	-webkit-border-radius:5px;
+ }
+
+.grayReportCard {
+	background-color: #d3d3d3;
+	height: 170px;
+	width: 120px;
+	display: table;
+	float: left;
+	cursor: text;
+	margin: 10px;
+	margin-top: 0px;
+	padding: 0px;
+	-webkit-border-radius:5px;
+ }
+
+	.stateCenter {
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+	width: 190px;
+	padding: 3px;
+	/*border: 1px solid red;*/
+ }
+
+	.grayStateCenter {
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+	width: 130px;
+	padding: 3px;
+	font-size: 14px;
+	line-height: 120%;
+	/*border: 1px solid red;*/
+ }
+
+	.belize-hole-flat-button {
+	position: relative;
+	vertical-align: top;
+	width: 100px;
+	height: 20px;
+	margin: 4px 0px 100px 0px;
+	padding: 1px 2px;
+	font-size: 14px;
+	color: white;
+	text-align: center;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+	background: #1985c5;
+	border: 0;
+	/*border-bottom: 2px solid #2475ab;*/
+	cursor: pointer;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+ /* -webkit-box-shadow: inset 0 -2px #2475ab;*/
+	-webkit-border-radius:5px;
+	/*box-shadow: inset 0 -2px #2475ab;*/
+	}
+
+	.belize-hole-flat-button:active {
+	top: 1px;
+	outline: none;
+	-webkit-box-shadow: none;
+	-webkit-border-radius:5px;
+	box-shadow: none;
+	background-color: gray;
+	}
+
+	.divSpacer {
+	width: 100%;
+	height: 150px;
+	}
+
+
+/* *****************  end page specific styles*/
+
+		body {
+		/* On modern browsers, prevent the whole page to bounce */
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+		}
+
+		#wrapper {
+		position: relative;
+		margin-top: 20px;
+		height: 748px;
+		width: 100%;
+		overflow: hidden;
+		margin-left: 15px;
+
+		/* Prevent native touch events on Windows */
+		-ms-touch-action: none;
+
+		/* Prevent the callout on tap-hold and text selection */
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+
+		/* Prevent text resize on orientation change, useful for web-apps */
+		-webkit-text-size-adjust: none;
+		-moz-text-size-adjust: none;
+		-ms-text-size-adjust: none;
+		-o-text-size-adjust: none;
+		text-size-adjust: none;
+		}
+
+		#scroller {
+		position: absolute;
+
+		/* Prevent elements to be highlighted on tap */
+		-webkit-tap-highlight-color: rgba(0,0,0,0);
+
+		/* Put the scroller into the HW Compositing layer right from the start */
+		-webkit-transform: translateZ(0);
+		-moz-transform: translateZ(0);
+		-ms-transform: translateZ(0);
+		-o-transform: translateZ(0);
+		transform: translateZ(0);
+		}
+
+		/* Nav menu styling */
+		nav { position: absolute;
+			bottom: 5px;
+			left: 240px;
+			border-spacing: 0px;
+			margin-top: 5px;
+			}
+		nav a { padding: 5px 15px 15px 15px; text-align: center;  background-color: #1985c5;border-top-left-radius: 5px; border-top-right-radius: 5px; border: 3px solid #1985c5; margin-right: -4px; margin-left: -4px;
+			}
+		nav a.selected { background-color: white; color: #1985c5;}
+		a { color: #2d343c; text-align: center; font-weight: bold; font-family: HelveticaNeue-CondensedBlack; text-decoration: none;}    /* changes the color of the a links */
+
+		#postsortFinishButton {
+		  position: absolute;
+			font-family: HelveticaNeue-CondensedBlack;
+			right: 20px;
+			bottom: 20px;
+			font-size: 30px;
+			text-align: center;
+			height: 100px;
+			width: 150px;
+			background: #1985c5;
+			border: 1px solid white;
+			cursor: pointer;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			-webkit-border-radius:5px;
+			color: #ffffff;
+		}
+
+		#endButton {
+			display: block;
+			color: #ffffff;
+			text-decoration: none;
+			width: 100%;
+			height: 100%;
+			padding-top: 27px;
+		}
+
+		#delayContainer {display:none}
+
+</style>
+
+
+</head>
+<body onload="loaded()">
+
+	<div id="delayContainer">
+
+	<div id="wrapper"> <!--container for iscroll5 -->
+	<div id="scroller">
+
+		<div class="divSpacer"></div>
+
+		<h1 style="font-size:74px;  font-family: HelveticaNeue-CondensedBlack;">Post Q-Sort Interview</h1>
+
+		<div class="divSpacer"></div>
+
+
+<!--       data-persist="garlic" method="POST" -->
+
+		<form  id="commentInputBox">
+		<div style="width:100%; float:right">
+		</div>
+		<span><p style="font-size: 35px" margin-bottom="-25px;"><strong>Position +3 Cards</strong></p></span>
+		<div style="width:100%; float:right">
+		</div>
+		<div style="width:100%; float:right">
+		</div>
+
+
+<!-- START GREEN CARD REVIEW -->
+		<div> <!--  green card wrapper  -->
+		<div class="greenReportCard">
+		    <span class="stateCenter" id="greenReportCard1" style="margin-left: 20px;"></span>
+		</div>
+		<div class="greenReportCard">
+		    <p class="stateCenter"  id="greenReportCard2"></p></br>
+		</div>
+		<div class="greenReportCard" id="gReport3">
+		    <p class="stateCenter" id="greenReportCard3"></p></br>
+		</div>
+		<div class="greenReportCard" id="gReport4">
+		    <p class="stateCenter" id="greenReportCard4"></p></br>
+		</div>
+		<div class="greenReportCard" id="gReport5">
+			<p class="stateCenter" id="greenReportCard5"></p></br>
+		</div>
+		<span></span>
+
+		<textarea type="input" id="greenCardCommentBox"  name="responseGreenState1" style="width: 100%; height: 125px; font-size: 16px;"></textarea>
+
+		</div> <!-- end green card wrapper -->
+
+<!-- END GREEN CARD REVIEW -->
+
+		<span><p style="font-size: 35px"><strong>Position -3 Cards</strong></p></span>
+
+		<!-- START PINK CARD REVIEW -->
+		<span style="width:100%"></span>
+		<div class="pinkReportCard">
+		    <span class="stateCenter" id="pinkReportCard1"></span>
+		</div>
+		<div class="pinkReportCard">
+		    <p class="stateCenter"  id="pinkReportCard2"></p></br>
+		</div>
+		<div class="pinkReportCard" id="pReport3">
+		    <p class="stateCenter" id="pinkReportCard3"></p></br>
+		</div>
+		<div class="pinkReportCard" id="pReport4">
+		    <p class="stateCenter" id="pinkReportCard4"></p></br>
+		</div>
+		<div class="pinkReportCard" id="pReport5">
+			<p class="stateCenter" id="pinkReportCard5"></p></br>
+		</div>
+		<span></span>
+
+		<textarea type="input" id="pinkCardCommentBox" name="responsePinkState1" style=" width: 100%; height: 125px; font-size: 16px;"></textarea>
+
+
+<!-- END PINK CARD REVIEW -->
+
+		<span><p style="font-size: 35px"><strong>Position 0 Cards</strong></p></span>
+		<!-- START GRAY CARD REVIEW -->
+		<span style="width:100%"></span>
+		<div class="grayReportCard">
+		    <span class="grayStateCenter" id="grayReportCard1"></span>
+		</div>
+		<div class="grayReportCard">
+		    <p class="grayStateCenter"  id="grayReportCard2"></p></br>
+		</div>
+		<div class="grayReportCard">
+		    <p class="grayStateCenter" id="grayReportCard3"></p></br>
+		</div>
+		<div class="grayReportCard">
+		    <p class="grayStateCenter" id="grayReportCard4"></p></br>
+		</div>
+		<div class="grayReportCard">
+		    <p class="grayStateCenter" id="grayReportCard5"></p></br>
+		</div>
+		<div class="grayReportCard" id="grReport6">
+		    <p class="grayStateCenter" id="grayReportCard6"></p></br>
+		</div>
+		<div class="grayReportCard" id="grReport7">
+			<p class="grayStateCenter" id="grayReportCard7"></p></br>
+		</div>
+
+		<span></span>
+
+		<textarea type="input" id="grayCardCommentBox"  name="responseGrayState1" style=" width: 100%; height: 125px; font-size: 16px;"></textarea>
+
+		</form>
+
+	<button type="submit" id="postsortFinishButton" ontouchstart="fireFinishPostsortButton()">End Sort</button>
+
+	</br>
+	</br>
+	</br>
+	</br>
+	</br>
+	</br>
+	</br>
+	</br>
+	</br>
+	</br>
+	</br>
+	</br>
+	</br>
+	</br>
+
+	</div>  <!--end scroller for iscroll5 -->
+	</div>  <!--end wrapper for iscroll5-->
+
+
+
+<nav>
+	<a href="information.html">Information</a>
+	<a style=" background-color: white; color: #1985c5;" href="controls.html">Controls</a>
+	<a href="statements.html">Q Statements</a>
+	<a href="presort.html">Presort</a>
+	<a href="qsort.html">Sort</a>
+	<a href="postsort.html">Postsort</a>
+</nav>
+
+	</div> <!-- end delay fadeIn container -->
+
+ <script>
+ 	 ( function () {
+ 	   $( "#delayContainer").fadeIn(500);
+
+ 	  $( "nav" ).hide();
+
+		localStorage.setItem("responseGreenState1", "");
+		localStorage.setItem("responsePinkState1", "");
+		localStorage.setItem("responseGrayState1", "");
+		// $('commentInputBox').garlic('destroy');
+		// $('greenCardCommentBox').garlic('destroy');
+		// $('pinkCardCommentBox').garlic('destroy');
+		// $('grayCardCommentBox').garlic('destroy');
+
+		var prepGreenResults = localStorage.getItem("greenReview");
+		var retreiveGreenResults = JSON.parse(prepGreenResults);
+		console.log(JSON.stringify(retreiveGreenResults));
+		 if ( retreiveGreenResults ) {
+		 for ( var i = 0; i<retreiveGreenResults.length; i++ ) {
+			 var k = i +1;
+			 var tempHolder1= retreiveGreenResults[i];
+			 $("#greenReportCard" + k).append(localStorage.getItem('state' + tempHolder1));
+		 };
+
+//		var greenReviewCard1 = retreiveGreenResults[0];
+//		var greenReviewCard2 = retreiveGreenResults[1];
+//		var greenReviewCard3 = retreiveGreenResults[2];
+//		var greenReviewCard4 = retreiveGreenResults[3];
+//
+//		$("#greenReportCard1").append(localStorage.getItem('state' + greenReviewCard1));
+//		$("#greenReportCard2").append(localStorage.getItem('state' + greenReviewCard2));
+//		$("#greenReportCard3").append(localStorage.getItem('state' + greenReviewCard3));
+//		$("#greenReportCard4").append(localStorage.getItem('state' + greenReviewCard4));
+
+
+		var prepPinkResults = localStorage.getItem("pinkReview");
+		var retreivePinkResults = JSON.parse(prepPinkResults);
+
+		 for ( var l = 0; l<retreivePinkResults.length; l++ ) {
+			 var m = l +1;
+			 var tempHolder2 = retreivePinkResults[l];
+			 $("#pinkReportCard" + m).append(localStorage.getItem('state' + tempHolder2));
+		 };
+
+//		var pinkReviewCard1 = retreivePinkResults[0];
+//		var pinkReviewCard2 = retreivePinkResults[1];
+//		var pinkReviewCard3 = retreivePinkResults[2];
+//		var pinkReviewCard4 = retreivePinkResults[3];
+//
+//		$("#pinkReportCard1").append(localStorage.getItem('state' + pinkReviewCard1));
+//		$("#pinkReportCard2").append(localStorage.getItem('state' + pinkReviewCard2));
+//		$("#pinkReportCard3").append(localStorage.getItem('state' + pinkReviewCard3));
+//		$("#pinkReportCard4").append(localStorage.getItem('state' + pinkReviewCard4));
+
+
+
+		  var prepGrayResults = localStorage.getItem("grayReview");
+		var retreiveGrayResults = JSON.parse(prepGrayResults);
+		var grayReviewCard1 = retreiveGrayResults[0];
+		var grayReviewCard2 = retreiveGrayResults[1];
+		var grayReviewCard3 = retreiveGrayResults[2];
+		var grayReviewCard4 = retreiveGrayResults[3];
+		var grayReviewCard5 = retreiveGrayResults[4];
+		var grayReviewCard6 = retreiveGrayResults[5];
+		var grayReviewCard7 = retreiveGrayResults[6];
+
+
+		$("#grayReportCard1").append(localStorage.getItem('state' + grayReviewCard1));
+		$("#grayReportCard2").append(localStorage.getItem('state' + grayReviewCard2));
+		$("#grayReportCard3").append(localStorage.getItem('state' + grayReviewCard3));
+		$("#grayReportCard4").append(localStorage.getItem('state' + grayReviewCard4));
+		$("#grayReportCard5").append(localStorage.getItem('state' + grayReviewCard5));
+		$("#grayReportCard6").append(localStorage.getItem('state' + grayReviewCard6));
+		$("#grayReportCard7").append(localStorage.getItem('state' + grayReviewCard7));
+
+		 }})();
+
+
+		$( document ).ready(function()  {
+
+		var activeRadioValue = localStorage.getItem("activeRadio");
+		switch (activeRadioValue) {
+			case "state41":
+			break;
+			case "state39":
+			break;
+			default:  // state37
+			$('#pReport5').hide();
+			$('#gReport5').hide();
+		};
+		});
+</script>
+
+
+<script>
+		var fireFinishPostsortButton = function () {
+			  $('nav a:nth-child(2)').trigger('touchstart');
+		};
+
+			$('#greenCardCommentBox, #pinkCardCommentBox, #grayCardCommentBox').on('input propertychange change', function() {
+	        localStorage.setItem(this.name, this.value);
+	　　　});
+		</script>
+
+
+
+<script type="text/javascript">
+		// stay standalone
+		    //https://github.com/mrmoses/jQuery.stayInWebApp
+		    (function($){$.extend({stayInWebApp:function(b){"standalone"in 		window.navigator&&window.navigator.standalone&&(b||(b="a"),$("body").delegate(b,"touchstart",function(b){if($(this).attr("target")==void 0||$(this).attr("target")==""||$(this).attr("target")=="_self"){var c=$(this).attr("href");if(!c.match(/^http(s?)/g))b.preventDefault(),self.location=c}}))}})})(jQuery);
+		    $(function() { $.stayInWebApp(); });
+		        // This use only links with the class stay.
+		        // $(function() { $.stayInWebApp('a.stay');});
+		// end stay standalone
+</script>
+
+
+</body>
+</html>

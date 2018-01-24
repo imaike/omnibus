@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <!-- apple viewport standalone -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="images/touch-icon-ipad.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="images/touch-icon-ipad-retina.png">
+
+    <!-- iPad Non-Retina Portrait -->
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (orientation: portrait)" href="images/apple-touch-startup-image-768x1004.png">
+    <!-- iPad Non-Retina Landscape -->
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (orientation: landscape)" href="images/apple-touch-startup-image-748x1024.png">
+    <!-- iPad Retina Portrait -->
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)"
+        href="images/apple-touch-startup-image-1536x2008.png">
+    <!-- iPad Retina Landscape -->
+    <link rel="apple-touch-startup-image" media="(device-width: 768px)  and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)"
+        href="images/apple-touch-startup-image-1496x2048.png">
+
+    <!-- load libraries -->
+    <script type="text/javascript" src="iscroll-lite.js"></script>
+    <script type="text/javascript" src="jquery-1.10.2.min.js"></script>
+
+    <!-- initialize iscroll5  and page display fadeIn-->
+    <script type="text/javascript">
+        var myScroll;
+
+        function loaded() {
+            myScroll = new IScroll('#wrapper');
+        }
+        document.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+        }, false);
+    </script>
+
+    <title>Kobe College Demo</title>
+
+    <style>
+        /*  *************** page specific styles*/
+
+        p {
+            font-family: Georgia;
+        }
+
+        #title {
+            display: block;
+            width: 100%;
+            font-size: 90px;
+            font-family: HelveticaNeue-CondensedBlack;
+            color: black;
+            text-align: left;
+            margin-left: 0px;
+        }
+
+        #catchPhrase {
+            float: left;
+            font-size: 25px;
+            color: red;
+            font-family: HelveticaNeue-BoldItalic;
+            font-style: oblique;
+            margin-left: 0px;
+            margin-top: -80px;
+        }
+
+        #infoText {
+            font-size: 24px;
+            margin-top: 10px;
+            margin-left: 2px;
+        }
+
+        #heroDiv {
+            width: 100%;
+            height: 250px;
+        }
+
+        #textBox {
+            position: relative;
+        }
+
+        #copyright {
+            position: absolute;
+            left: 30px;
+            font-family: HelveticaNeue-CondensedBlack;
+            margin-bottom: 20px;
+        }
+
+        .paraHeader {
+            color: black;
+            font-weight: bold;
+        }
+
+        #imageHolder {
+            margin-left: -35px;
+            height: 300px;
+            margin-bottom: 10px;
+        }
+
+        #imageHolder2 {
+            margin-left: -5px;
+            height: 300px;
+        }
+
+        div.horizontal {
+            display: inline-block;
+            margin-right: 1px;
+        }
+
+        div.horizontalLable {
+            display: inline-block;
+            width: 280px;
+        }
+
+        .horizontalLabelText {
+            margin-left: 63px;
+        }
+
+        .horizontalImage {
+            margin-left: 165px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        ol li .processList {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            /*         border: 3px solid red;*/
+        }
+
+        img {
+            /*         border: 3px solid red;*/
+        }
+        /* *****************  end page specific styles*/
+
+        body {
+            /* On modern browsers, prevent the whole page to bounce */
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #wrapper {
+            position: relative;
+            margin-top: 20px;
+            height: 748px;
+            width: 1004px;
+            overflow: hidden;
+            margin-left: 10px;
+            /* Prevent native touch events on Windows */
+            -ms-touch-action: none;
+            /* Prevent the callout on tap-hold and text selection */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            /* Prevent text resize on orientation change, useful for web-apps */
+            -webkit-text-size-adjust: none;
+            -moz-text-size-adjust: none;
+            -ms-text-size-adjust: none;
+            -o-text-size-adjust: none;
+            text-size-adjust: none;
+        }
+
+        #scroller {
+            position: absolute;
+            width: 100%;
+            margin-left: 0px;
+            /* Prevent elements to be highlighted on tap */
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            /* Put the scroller into the HW Compositing layer right from the start */
+            -webkit-transform: translateZ(0);
+            -moz-transform: translateZ(0);
+            -ms-transform: translateZ(0);
+            -o-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+        /* Nav menu styling */
+
+        nav {
+            position: absolute;
+            bottom: 55px;
+            left: 640px;
+            border-spacing: 0px;
+            margin-top: 5px;
+        }
+
+        nav a {
+            padding: 15px 15px 15px 15px;
+            color: white;
+            letter-spacing: 1.75px;
+            font-size: 22px;
+            text-align: center;
+            background-color: #1985c5;
+            border-radius: 5px;
+
+            /* border-top-left-radius: 5px;
+            border-top-right-radius: 5px; */
+            border: 3px solid #1985c5;
+            margin-right: -4px;
+            margin-left: -4px;
+            text-decoration: none;
+        }
+
+        nav a.selected {
+            background-color: white;
+            color: #1985c5;
+        }
+
+        a {
+            color: #2d343c;
+            text-align: center;
+            font-weight: bold;
+            font-family: HelveticaNeue-CondensedBlack;
+        }
+
+        input[type=text],
+        select {
+            width: 500px;
+            font-size: 18px;
+            padding: 12px 20px;
+            margin: 8px 0;
+            margin-left: 10px;
+            display: inline-block;
+            border: 3px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        #nameDiv {
+            display: flex;
+        }
+        /* changes the color of the a links */
+        /*
+        
+        #delayContainer {
+            display: none
+        }
+*/
+    </style>
+
+
+</head>
+
+<body onload="loaded()">
+    <div id="notAnIpad"></div>
+    <div id="delayContainer">
+
+        <div id="wrapper">
+            <!--container for iscroll5 -->
+            <div id="scroller">
+                <div id="textBox">
+
+                    <div id="heroDiv">
+
+                        <div>
+                            <h1 id="title">How can we attract more students to Kobe College?</h1>
+                        </div>
+
+                    </div>
+                    <!-- end hero div -->
+
+
+
+                    <div id="infoText">
+
+                        <span></span>
+
+                        <h2>Thank you for agreeing to take this survey!</h2>
+
+
+                        <br>
+                        <br>
+
+                    </div>
+                    <!--end infotext div -->
+                </div>
+                <!--end textbox div -->
+            </div>
+            <!--end scroller for iscroll5 -->
+        </div>
+        <!--end wrapper for iscroll5-->
+
+        <div id="navDiv">
+            <nav>
+                <a href="presort2.html" class="stay">Begin Survey</a>
+            </nav>
+        </div>
+    </div>
+    <!-- end fadeIn div -->
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            // $("#navDiv").hide();
+
+            localStorage.setItem("state1", "ディベートは良い学習環境作りに役立ったと思う");
+            localStorage.setItem("state2", "ディベートをすることにより、この授業内容をより深く理解することができた");
+            localStorage.setItem("state3", "ディベートをしたことにより、自分の他の授業と比較してこのクラスの同級生からより多くを学んだ");
+            localStorage.setItem("state4", "ディベートをしたことにより、ディベートしていなければ学んでなかったであろう物事を学ぶのに大変役立った");
+            localStorage.setItem("state5", "ディベートにより、概念間のつながりが分かるようになった");
+            localStorage.setItem("state6", "ディベートは私の好ましい学習方法である");
+            localStorage.setItem("state7", "このクラスでのデイベートは 私のやる気を引き出してくれた");
+            localStorage.setItem("state8", "このクラスで学んだディベートスキルは他のクラスで役立つと思う");
+            localStorage.setItem("state9", "ディベートによって、より授業内容に集中することができた");
+            localStorage.setItem("state10", "ディベートによって、前回のクラスセッションの内容を思い出すのに役立った");
+            localStorage.setItem("state11", "他のクラスと比べて、ディベートがあったためより多くこの授業に参加することができた");
+            localStorage.setItem("state12", "ディベートのおかげで、より簡単に授業の概念について意見を表現することができた");
+            localStorage.setItem("state13", "ディベートによって、他の生徒の意見を知れたことは面白かった");
+            localStorage.setItem("state14", "ディベート時に iPadを使用して質問をしたことは、より面白い方法だった");
+            localStorage.setItem("state15", "ディベートは、授業内容を理解する（学ぶ）のに大変役立った。");
+            localStorage.setItem("state16", "クラスでのディベート時に発言することは、苦手だ");
+            localStorage.setItem("state17", "ディベートするには、自分の考えと関係なく反対意見を話さなければならなかったから、やりにくかった");
+            localStorage.setItem("state18", "ディベートは貴重な授業時間を無駄にしたと思う");
+            localStorage.setItem("state19", "この授業でディベートする方法を理解するのが難しかった");
+            localStorage.setItem("state20", "ディベートすることにより、授業内容を理解するのが更に難しくなった。");
+            localStorage.setItem("state21", "ディベートで、自分の考えを表現することは困難でした");
+            localStorage.setItem("state22", "ディベート関連の内容は、クラスの他の内容（例：ビデオ）と統一性がなかった");
+            localStorage.setItem("state23", "ディベートでは自分の意見を表現できず消極的だった");
+            localStorage.setItem("state24", "ディベートしている時間、退屈だった");
+            localStorage.setItem("state25", "ディベート時、他の学生の意見がわかりにくかった");
+            localStorage.setItem("state26", "ディベートをしたため、授業内容に集中できなかった");
+            localStorage.setItem("state27", "ディベートをしたため、教授と話すことができなかった");
+            localStorage.setItem("state28", "ディベートをしたため、他の学生と話すことができなかった");
+            localStorage.setItem("state29", "ディベートのせいで、自分の語学力に対する自信がなくなった");
+            localStorage.setItem("state30", "授業でのディベートは不便に感じた");
+
+
+            // Check to see if visitor is using an iPad
+            // checkDevice();
+
+            // $("#participantName").on("input", function (e) {
+            //     var name = e.target.value;
+            //     console.log(name.length);
+            //     localStorage.setItem("participantName", name);
+            //     if (name.length > 0) {
+            //         $("#navDiv").show();
+            //     }
+            // });
+
+
+            // Check to see if Web App is saved to Homescreen
+            function checkDevice() {
+                var isiPad = navigator.userAgent.match(/iPad/i) != null;
+                console.log(isiPad);
+                if (isiPad === true) {
+                    checkiPadStandAlone();
+                } else {
+                    $('#delayContainer').css('display', 'none');
+                    $('#notAnIpad').css('background-color', '#fff').append(
+                        '<a href="mailto:?subject=Install%20Ken-Q%20Mobile%20on%20your%20iPad&amp;body=Add%20this%20Web%20Application%20to%20your%20iPad%20by%20visiting:%20http://www.banasick.net/ken-qmobile07/information.html"><img src="images/non_ipad_message.png"/></a>'
+                    );
+                    $("#notAnIpad").fadeIn(500);
+                }
+            };
+
+            function checkiPadStandAlone() {
+                if (window.navigator.standalone == false) {
+                    $('#delayContainer').css('display', 'none');
+                    $('#notAnIpad').css('background-color', '#fff').append(
+                        '<img  src="images/add_to_homescreen.png"/>');
+                    $("#notAnIpad").fadeIn(500);
+                } else {
+                    $("#delayContainer").fadeIn(500);
+                };
+            };
+
+
+
+
+            // stay standalone
+            //https://github.com/mrmoses/jQuery.stayInWebApp
+            (function ($) {
+                $.extend({
+                    stayInWebApp: function (b) {
+                        "standalone" in window.navigator && window.navigator.standalone && (b ||
+                            (b = "a"), $("body").delegate(b, "touchstart", function (b) {
+                                if ($(this).attr("target") == void 0 || $(this).attr(
+                                        "target") == "" || $(this).attr("target") ==
+                                    "_self") {
+                                    var c = $(this).attr("href");
+                                    if (!c.match(/^http(s?)/g)) b.preventDefault(),
+                                        self.location = c
+                                }
+                            }))
+                    }
+                })
+            })(jQuery);
+            $(function () {
+                $.stayInWebApp('a.stay');
+            });
+            // This use only links with the class stay.
+            // $(function() { $.stayInWebApp('a.stay');});
+            // end stay standalone
+        });
+    </script>
+
+    <script>
+    </script>
+
+</body>
+
+</html>

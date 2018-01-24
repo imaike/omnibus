@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <!-- apple viewport standalone -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="images/touch-icon-ipad.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="images/touch-icon-ipad-retina.png">
+
+    <!-- iPad Non-Retina Portrait -->
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (orientation: portrait)" href="images/apple-touch-startup-image-768x1004.png">
+    <!-- iPad Non-Retina Landscape -->
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (orientation: landscape)" href="images/apple-touch-startup-image-748x1024.png">
+    <!-- iPad Retina Portrait -->
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)"
+        href="images/apple-touch-startup-image-1536x2008.png">
+    <!-- iPad Retina Landscape -->
+    <link rel="apple-touch-startup-image" media="(device-width: 768px)  and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)"
+        href="images/apple-touch-startup-image-1496x2048.png">
+
+    <!-- load libraries -->
+    <script type="text/javascript" src="iscroll-lite.js"></script>
+    <script type="text/javascript" src="jquery-1.10.2.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase-database.js"></script>
+
+    <!-- initialize iscroll5  and page display fadeIn-->
+    <script type="text/javascript">
+        var myScroll;
+
+        function loaded() {
+            myScroll = new IScroll('#wrapper');
+        }
+        document.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+        }, false);
+    </script>
+
+    <title>Ken-Q Mobile Client</title>
+
+    <style>
+        /*  *************** page specific styles*/
+
+        .quickselect__more {
+            position: relative;
+        }
+
+        .quickselect__select {
+            -webkit-appearance: menulist-button;
+            /* Fix for Chrome's select box height bug */
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            color: #333;
+            border: 0;
+        }
+
+        .quickselect__select:not(:disabled) {
+            cursor: pointer;
+        }
+
+        .quickselect__select.quickselect__hidden {
+            position: absolute;
+            width: 0;
+            height: 0;
+            visibility: hidden;
+            padding: 0;
+        }
+
+        .presortCards {
+            width: 840px;
+            height: 40px;
+            float: left;
+            text-align: left;
+            margin: 2px;
+            background-color: #ffffcc;
+            /* yellow */
+            -webkit-border-radius: 5px;
+        }
+
+        .cardText {
+            padding-left: 10px;
+            padding-top: 10px;
+            height: 30px;
+            font-size: 17.5px;
+            font-family: AvenirNextCondensed-Regular;
+            -webkit-border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .sortButtonGreen {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            float: right;
+            margin-left: 5px;
+            margin-right: 15px;
+            width: 45px;
+            margin-top: 2px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            height: 40px;
+            background: #99cc99;
+            border: 0px solid #666;
+            cursor: pointer;
+            -webkit-border-radius: 5px;
+        }
+
+        .sortButtonGreen:active {
+            border: 3px solid #666;
+        }
+
+        .sortButtonGreen span {
+            display: block;
+            padding-top: 0px;
+            font-size: 300%;
+            padding-left: 0px;
+            padding-bottom: 9px;
+            text-align: center;
+            line-height: 1em;
+        }
+
+        .sortButtonGray {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            float: right;
+            margin-left: 5px;
+            width: 45px;
+            margin-top: 2px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            height: 40px;
+            background: #cccccc;
+            border: 0px solid #666;
+            cursor: pointer;
+            -webkit-border-radius: 5px;
+        }
+
+        .sortButtonGray span {
+            display: block;
+            padding-top: 2px;
+            font-size: 300%;
+            padding-bottom: 0px;
+            text-align: center;
+            line-height: 1em;
+        }
+
+        .sortButtonPink {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            float: right;
+            margin-left: 5px;
+            width: 45px;
+            margin-top: 2px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            height: 40px;
+            background: #ff9999;
+            border: 0px solid #666;
+            cursor: pointer;
+            -webkit-border-radius: 5px;
+        }
+
+        .sortButtonPink span {
+            display: block;
+            padding-top: 2px;
+            font-size: 300%;
+            padding-left: 0px;
+            padding-bottom: 6px;
+            text-align: center;
+            line-height: 1em;
+        }
+
+        .spacer {
+            width: 100%;
+            height: 60px;
+        }
+
+        h1 {
+            width: 700px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            display: block;
+            font-family: HelveticaNeue-CondensedBlack;
+            font-size: 60px;
+            text-align: center;
+            position: absolute;
+            top: 50px;
+        }
+
+        h2 {
+            margin-left: 50px;
+            display: inline-block;
+            margin-right: 25px;
+        }
+        /* *****************  end page specific styles*/
+
+        #presortFinishButton {
+            display: block;
+            float: right;
+            margin-top: 50px;
+            margin-left: 250px;
+            font-family: HelveticaNeue-CondensedBlack;
+            font-size: 32px;
+            text-align: center;
+            height: 65px;
+            width: 150px;
+            background: #1985c5;
+            border: 1px solid white;
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            -webkit-border-radius: 5px;
+            color: #ffffff;
+            margin-bottom: 15px;
+            padding-bottom: 40px;
+        }
+
+        #finishButton {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            width: 100%;
+            height: 100%;
+            padding-bottom: 10px;
+        }
+
+        #finishButton:active {
+            border: 3px solid #ffffff;
+        }
+
+        body {
+            /* On modern browsers, prevent the whole page to bounce */
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #wrapper {
+            position: relative;
+            margin-top: 20px;
+            height: 748px;
+            width: 100%;
+            overflow: hidden;
+            /* Prevent native touch events on Windows */
+            -ms-touch-action: none;
+            /* Prevent the callout on tap-hold and text selection */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            /* Prevent text resize on orientation change, useful for web-apps */
+            -webkit-text-size-adjust: none;
+            -moz-text-size-adjust: none;
+            -ms-text-size-adjust: none;
+            -o-text-size-adjust: none;
+            text-size-adjust: none;
+        }
+
+        #scroller {
+            position: absolute;
+            /* Prevent elements to be highlighted on tap */
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            /* Put the scroller into the HW Compositing layer right from the start */
+            -webkit-transform: translateZ(0);
+            -moz-transform: translateZ(0);
+            -ms-transform: translateZ(0);
+            -o-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+        /* Nav menu styling */
+
+        nav {
+            position: absolute;
+            bottom: 5px;
+            left: 240px;
+            border-spacing: 0px;
+            margin-top: 5px;
+        }
+
+        nav a {
+            padding: 5px 15px 15px 15px;
+            text-align: center;
+            background-color: #1985c5;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            border: 3px solid #1985c5;
+            margin-right: -4px;
+            margin-left: -4px;
+        }
+
+        nav a.selected {
+            background-color: white;
+            color: #1985c5;
+        }
+
+        a {
+            color: #2d343c;
+            text-align: center;
+            font-weight: bold;
+            font-family: HelveticaNeue-CondensedBlack;
+        }
+        /* changes the color of the a links */
+
+        #statementContainer {
+            margin-top: 300px;
+            display: block;
+            width: 100%;
+        }
+
+        #delayContainer {
+            display: none
+        }
+
+        #endStatements {
+            font-family: HelveticaNeue-CondensedBlack;
+            font-size: 24px;
+        }
+
+        .styled-select {
+            padding-left: 10px;
+            width: 150px;
+            height: 34px;
+            overflow: hidden;
+            /*background: url(new_arrow.png) no-repeat right #ddd;*/
+            background: #ddd;
+            border: 1px solid #ccc;
+            font-size: 20px;
+        }
+
+        #thankYouMessage {
+            margin-left: 350px;
+        }
+
+        textarea {
+            border: 2px solid gray;
+            margin-left: 50px;
+            display: block;
+            font-size: 14px;
+        }
+    </style>
+
+
+    <!-- Clear previous presort localStorage data -->
+
+</head>
+
+<body onload="loaded()">
+
+    <div id="delayContainer">
+
+        <div id="wrapper">
+            <!--container for iscroll5 -->
+            <div id="scroller">
+
+
+
+                <h1>Final Questions</h1>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <h2>何年生ですか。</h2>
+                <select id="question1" class="styled-select">
+                    <option value="">Select one...</option>
+                    <option value="first">一年生</option>
+                    <option value="second">二年生</option>
+                    <option value="third">三年生</option>
+                    <option value="fourth">四年生</option>
+                </select>
+                <br/>
+                <br/>
+                <br/>
+
+
+                <h2>他の授業でディベートをしたことはありますか。</h2>
+                <select id="question4" class="styled-select">
+                    <option value="">Select one...</option>
+                    <option value="yes">はい</option>
+                    <option value="no">いいえ</option>
+                </select>
+                <br/>
+                <br/>
+                <br/>
+
+                <div id="feedbackDiv">
+                    <h2>ディベートの感想:</h2>
+                    <textarea cols="100" rows="15" id="feedback"> </textarea>
+                </div>
+
+
+                <!-- <h2>スマートフォンを持っていますか。</h2>
+                <select id="question2" class="styled-select">
+                    <option value="">Select one...</option>
+                    <option value="yes">はい</option>
+                    <option value="no">いいえ</option>
+                </select>
+                <br/>
+                <br/>
+                <br/>
+                <h2>iPadを自宅を持っていますか。</h2>
+                <select id="question3" class="styled-select">
+                    <option value="">Select one...</option>
+                    <option value="yes">はい</option>
+                    <option value="no">いいえ</option>
+                </select> -->
+                <br/>
+                <br/>
+                <br/>
+
+                <!-- <h2>あなたは今まで授業中にiPadで
+                    <br/>ソーシャルメディアにアクセスしたことがありますか。</h2>
+                <select id="question5" class="styled-select">
+                    <option value="">Select one...</option>
+                    <option value="yes">はい</option>
+                    <option value="no">いいえ</option>
+                </select> -->
+
+                <br/>
+                <br/>
+                <br/>
+                <!-- <h2>あなたは今まで授業中に
+                    <br/>スマホでソーシャルメディアにアクセスしたことがありますか。</h2>
+                <select id="question6" class="styled-select">
+                    <option value="">Select one...</option>
+                    <option value="yes">はい</option>
+                    <option value="no">いいえ</option>
+                </select> -->
+
+
+                <div>
+                    <div class="button" id="presortFinishButton">
+                        <p id="finishButton">Send Data</p>
+                    </div>
+                </div>
+
+
+
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <div id="thankYouMessage">
+                    <h2>ありがとうございますありがとうございます!</h2>
+                </div>
+
+            </div>
+            <!--end scroller for iscroll5 -->
+        </div>
+        <!--end wrapper for iscroll5-->
+
+    </div>
+    <!--end wrapper for delay fadeIn-->
+
+
+
+    <!-- show / hide presorts according to persisted activeRadio -->
+    <script type="text/javascript">
+        (function () {
+            $("#delayContainer").fadeIn(500);
+        })();
+        var config = {
+            apiKey: "AIzaSyBh-hQToWIdMWQ-Bvq9XPuiMUiU_MFOjeo",
+            authDomain: "omnibus-debate-f17.firebaseapp.com",
+            databaseURL: "https://omnibus-debate-f17.firebaseio.com",
+            projectId: "omnibus-debate-f17",
+            storageBucket: "omnibus-debate-f17.appspot.com",
+            messagingSenderId: "349636370115"
+        };
+        firebase.initializeApp(config);
+        var rootRef = firebase.database().ref();
+
+
+
+        $("#feedback").on("input", function (e) {
+            var studentFeedback = e.target.value;
+            console.log(studentFeedback);
+            localStorage.setItem("feedback", studentFeedback);
+        });
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#thankYouMessage").hide();
+
+            var randomId = makeId();
+            localStorage.setItem("randomId", randomId);
+
+
+            $("#presortFinishButton").on('touchstart', function () {
+                $(this).hide();
+                var results = sendData();
+                submitViaFirebase(results);
+                $("#thankYouMessage").show();
+            })
+        });
+
+
+
+        function sendData() {
+
+            // alert("send data called -3");
+
+            var results = {};
+
+            var participantName = localStorage.getItem("participantName");
+            results.participantName = participantName;
+
+            var randomId = localStorage.getItem("randomId");
+            results.randomId = randomId;
+
+            var sort = localStorage.getItem("resultsAsString");
+            results.sort = sort.split(",").join("|");
+
+            var grayReview = JSON.parse(localStorage.getItem("grayReview")) || [""];
+            grayReview = grayReview.toString();
+            grayReview = grayReview.split(",").join("|");
+            results.grayCardResults = grayReview;
+
+            var pinkReview = JSON.parse(localStorage.getItem("pinkReview")) || [""];
+            pinkReview = pinkReview.toString();
+            pinkReview = pinkReview.split(",").join("|");
+            results.pinkCardResults = pinkReview;
+
+            var greenReview = JSON.parse(localStorage.getItem("greenReview")) || [""];
+            greenReview = greenReview.toString();
+            greenReview = greenReview.split(",").join("|");
+            results.greenCardResults = greenReview;
+
+            var responseGreenState1 = localStorage.getItem("responseGreenState1");
+            results.responseGreenState1 = responseGreenState1;
+
+            var responsePinkState1 = localStorage.getItem("responsePinkState1");
+            results.responsePinkState1 = responsePinkState1;
+
+            var responseGrayState1 = localStorage.getItem("responseGrayState1");
+            results.responseGrayState1 = responseGrayState1;
+
+            results.year = $("#question1").val();
+            results.smartphone = $("#question2").val();
+            results.ipadHome = $("#question3").val();
+            results.ipadClass = $("#question4").val();
+            results.ipadSocial = $("#question5").val();
+            results.iphoneSocial = $("#question6").val();
+            results.feedback = localStorage.getItem("feedback");
+
+            results.name = "Ken-Q Client";
+
+            console.log(results);
+            return results;
+        }
+
+        function submitViaFirebase(results) {
+            //var results = makeParamsObject();
+
+            for (var i in results) {
+                if (results[i] === null || results[i] === undefined) {
+                    results[i] = "no_response";
+                }
+            }
+            rootRef.push(results, function (error) {
+                if (error) {
+                    $("#presortFinishButton").show();
+                    alert("error");
+                } else {
+                    alert("success");
+                }
+            });
+        }
+
+        function makeId() {
+            var text = "";
+            var possible = "abcdefghijklmnopqrstuvwxyz";
+
+            for (var i = 0; i < 7; i++)
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+            return text;
+        }
+    </script>
+
+
+
+</body>
+
+</html>
